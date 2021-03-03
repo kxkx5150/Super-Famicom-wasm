@@ -3,13 +3,16 @@
 jsでは実行速度が問題になりますが、wasmだと全然大丈夫。  
 wasmのデモ＆勉強用です。
 
+<br><br>
+
+DEMO  
+https://kxkx5150.github.io/Super-Famicom-wasm/
 
 
 
 
 
-
-<br><br><br>
+<br><br><br><br>
 
 xnesさんがwasm化した物をコンパイルしました。  
 https://github.com/tjwei/xnes
