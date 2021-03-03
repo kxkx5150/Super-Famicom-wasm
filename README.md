@@ -22,5 +22,6 @@ https://github.com/snes9xgit/snes9x
 
 Emscriptenの最新ではコンパイルできません。  
 Emscripten 1.38.33  
-スクリプトに　-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \　追加してコンパイル出来ました。
-
+スクリプトに　-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \　  
+追加してコンパイル出来ました。  
+WindowsならWSL2の環境が前提です。
