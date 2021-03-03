@@ -14,8 +14,7 @@ wasmのデモ＆勉強用です。
 xnesさんがwasm化した物をコンパイルしました。  
 https://github.com/tjwei/xnes
 
-wasmの元となったエミュレータ  
-snes9x  
+wasmの元となったエミュレータ  snes9x  
 https://github.com/snes9xgit/snes9x
 
 <br><br><br>
