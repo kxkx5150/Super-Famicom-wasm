@@ -456,7 +456,6 @@ bool8 S9xContinueUpdate (int width, int height)
 void S9xAutoSaveSRAM (void)
 {
 		Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
-    printf("auto save sram\n");
 }
 void S9xSyncSpeed (void)
 {
@@ -647,7 +646,7 @@ int main (int argc, char **argv)
 	s9x_base_dir = default_dir;
 
 	EM_ASM(
-		console.log('Syncing file system...');
+		// console.log('Syncing file system...');
 		FS.mkdir('/home/web_user/.snes9x');
 		FS.mkdir('/home/web_user/.snes9x/sram');
 		FS.mount(IDBFS, {}, '/home/web_user/.snes9x/sram');
@@ -655,7 +654,7 @@ int main (int argc, char **argv)
 			if (err) {
 				console.log(err);
 			} else {
-				console.log('File system synced.');
+				// console.log('File system synced.');
 				window.initSNES();
 			}
 		});

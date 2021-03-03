@@ -2153,12 +2153,10 @@ bool8 CMemory::SaveSRAM (const char *filename)
 
 	if (size)
 	{
-		printf("Opening file %s for writing.\n", sramName);
 		file = fopen(sramName, "wb");
 		if (file)
 		{
 			size_t	ignore;
-			printf("Writing file %s.\n", sramName);
 			ignore = fwrite((char *) SRAM, 1, size, file);
 			fclose(file);
 		#ifdef __linux
@@ -2175,7 +2173,7 @@ bool8 CMemory::SaveSRAM (const char *filename)
 						console.log("Error saving sram file.");
 						console.log(err);
 					} else {
-						console.log("File system synced");
+						// console.log("File system synced");
 					}
 				});
 			);
