@@ -18,7 +18,7 @@ wasmの元となったエミュレータ
 snes9x  
 https://github.com/snes9xgit/snes9x
 
-<br><br>
+<br><br><br>
 
 Emscriptenの最新ではコンパイルできません。  
 Emscripten 1.38.33  
