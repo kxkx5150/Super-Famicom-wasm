@@ -1,5 +1,5 @@
 # Super-Famicom-wasm
- スーパーファミコン　wasm　Emulator  
+ スーパーファミコン WASM Emulator  
 jsでは実行速度が問題になりますが、wasmだと全然大丈夫。  
 wasmのデモ＆勉強用です。
 
