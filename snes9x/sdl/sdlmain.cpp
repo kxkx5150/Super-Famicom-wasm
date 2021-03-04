@@ -65,36 +65,33 @@
 #include <emscripten.h>
 #endif
 
+static const char *s9x_base_dir = NULL;
 
-static const char	*s9x_base_dir        = NULL;
+extern uint32 sound_buffer_size; // used in sdlaudio
 
-extern uint32           sound_buffer_size; // used in sdlaudio
+static char default_dir[PATH_MAX + 1];
 
-static char		default_dir[PATH_MAX + 1];
-
-static const char	dirNames[13][32] =
-{
-	"",				// DEFAULT_DIR
-	"",				// HOME_DIR
-	"",				// ROMFILENAME_DIR
-	"rom",			// ROM_DIR
-	"sram",			// SRAM_DIR
-	"savestate",	// SNAPSHOT_DIR
-	"screenshot",	// SCREENSHOT_DIR
-	"spc",			// SPC_DIR
-	"cheat",		// CHEAT_DIR
-	"patch",		// IPS_DIR
-	"bios",			// BIOS_DIR
-	"log",			// LOG_DIR
-	""
-};
-
+static const char dirNames[13][32] =
+		{
+				"",						// DEFAULT_DIR
+				"",						// HOME_DIR
+				"",						// ROMFILENAME_DIR
+				"rom",				// ROM_DIR
+				"sram",				// SRAM_DIR
+				"savestate",	// SNAPSHOT_DIR
+				"screenshot", // SCREENSHOT_DIR
+				"spc",				// SPC_DIR
+				"cheat",			// CHEAT_DIR
+				"patch",			// IPS_DIR
+				"bios",				// BIOS_DIR
+				"log",				// LOG_DIR
+				""};
 
 void S9xParseInputConfig(ConfigFile &, int pass); // defined in sdlinput
 
-static void NSRTControllerSetup (void);
+static void NSRTControllerSetup(void);
 
-void _makepath (char *path, const char *, const char *dir, const char *fname, const char *ext)
+void _makepath(char *path, const char *, const char *dir, const char *fname, const char *ext)
 {
 	if (dir && *dir)
 	{
@@ -113,12 +110,12 @@ void _makepath (char *path, const char *, const char *dir, const char *fname, co
 	}
 }
 
-void _splitpath (const char *path, char *drive, char *dir, char *fname, char *ext)
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
 {
 	*drive = 0;
 
-	const char	*slash = strrchr(path, SLASH_CHAR),
-				*dot   = strrchr(path, '.');
+	const char *slash = strrchr(path, SLASH_CHAR),
+						 *dot = strrchr(path, '.');
 
 	if (dot && slash && dot < slash)
 		dot = NULL;
@@ -154,8 +151,7 @@ void _splitpath (const char *path, char *drive, char *dir, char *fname, char *ex
 	}
 }
 
-
-void S9xExtraUsage (void) // domaemon: ExtraUsage -> ExtraDisplayUsage
+void S9xExtraUsage(void) // domaemon: ExtraUsage -> ExtraDisplayUsage
 {
 	/*                               12345678901234567890123456789012345678901234567890123456789012345678901234567890 */
 
@@ -179,13 +175,14 @@ void S9xExtraUsage (void) // domaemon: ExtraUsage -> ExtraDisplayUsage
 /*
  * domaemon: arg is parsed as ParseArg -> ParseDisplayArg
  */
-const char *S9xChooseMovieFilename (bool8 read_only){
-    return NULL;
+const char *S9xChooseMovieFilename(bool8 read_only)
+{
+	return NULL;
 }
 
-static void NSRTControllerSetup (void)
+static void NSRTControllerSetup(void)
 {
-	if (!strncmp((const char *) Memory.NSRTHeader + 24, "NSRT", 4))
+	if (!strncmp((const char *)Memory.NSRTHeader + 24, "NSRT", 4))
 	{
 		// First plug in both, they'll change later as needed
 		S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
@@ -193,70 +190,70 @@ static void NSRTControllerSetup (void)
 
 		switch (Memory.NSRTHeader[29])
 		{
-			case 0x00:	// Everything goes
-				break;
+		case 0x00: // Everything goes
+			break;
 
-			case 0x10:	// Mouse in Port 0
-				S9xSetController(0, CTL_MOUSE,      0, 0, 0, 0);
-				break;
+		case 0x10: // Mouse in Port 0
+			S9xSetController(0, CTL_MOUSE, 0, 0, 0, 0);
+			break;
 
-			case 0x01:	// Mouse in Port 1
-				S9xSetController(1, CTL_MOUSE,      1, 0, 0, 0);
-				break;
+		case 0x01: // Mouse in Port 1
+			S9xSetController(1, CTL_MOUSE, 1, 0, 0, 0);
+			break;
 
-			case 0x03:	// Super Scope in Port 1
-				S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
-				break;
+		case 0x03: // Super Scope in Port 1
+			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
+			break;
 
-			case 0x06:	// Multitap in Port 1
-				S9xSetController(1, CTL_MP5,        1, 2, 3, 4);
-				break;
+		case 0x06: // Multitap in Port 1
+			S9xSetController(1, CTL_MP5, 1, 2, 3, 4);
+			break;
 
-			case 0x66:	// Multitap in Ports 0 and 1
-				S9xSetController(0, CTL_MP5,        0, 1, 2, 3);
-				S9xSetController(1, CTL_MP5,        4, 5, 6, 7);
-				break;
+		case 0x66: // Multitap in Ports 0 and 1
+			S9xSetController(0, CTL_MP5, 0, 1, 2, 3);
+			S9xSetController(1, CTL_MP5, 4, 5, 6, 7);
+			break;
 
-			case 0x08:	// Multitap in Port 1, Mouse in new Port 1
-				S9xSetController(1, CTL_MOUSE,      1, 0, 0, 0);
-				// There should be a toggle here for putting in Multitap instead
-				break;
+		case 0x08: // Multitap in Port 1, Mouse in new Port 1
+			S9xSetController(1, CTL_MOUSE, 1, 0, 0, 0);
+			// There should be a toggle here for putting in Multitap instead
+			break;
 
-			case 0x04:	// Pad or Super Scope in Port 1
-				S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
-				// There should be a toggle here for putting in a pad instead
-				break;
+		case 0x04: // Pad or Super Scope in Port 1
+			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
+			// There should be a toggle here for putting in a pad instead
+			break;
 
-			case 0x05:	// Justifier - Must ask user...
-				S9xSetController(1, CTL_JUSTIFIER,  1, 0, 0, 0);
-				// There should be a toggle here for how many justifiers
-				break;
+		case 0x05: // Justifier - Must ask user...
+			S9xSetController(1, CTL_JUSTIFIER, 1, 0, 0, 0);
+			// There should be a toggle here for how many justifiers
+			break;
 
-			case 0x20:	// Pad or Mouse in Port 0
-				S9xSetController(0, CTL_MOUSE,      0, 0, 0, 0);
-				// There should be a toggle here for putting in a pad instead
-				break;
+		case 0x20: // Pad or Mouse in Port 0
+			S9xSetController(0, CTL_MOUSE, 0, 0, 0, 0);
+			// There should be a toggle here for putting in a pad instead
+			break;
 
-			case 0x22:	// Pad or Mouse in Port 0 & 1
-				S9xSetController(0, CTL_MOUSE,      0, 0, 0, 0);
-				S9xSetController(1, CTL_MOUSE,      1, 0, 0, 0);
-				// There should be a toggles here for putting in pads instead
-				break;
+		case 0x22: // Pad or Mouse in Port 0 & 1
+			S9xSetController(0, CTL_MOUSE, 0, 0, 0, 0);
+			S9xSetController(1, CTL_MOUSE, 1, 0, 0, 0);
+			// There should be a toggles here for putting in pads instead
+			break;
 
-			case 0x24:	// Pad or Mouse in Port 0, Pad or Super Scope in Port 1
-				// There should be a toggles here for what to put in, I'm leaving it at gamepad for now
-				break;
+		case 0x24: // Pad or Mouse in Port 0, Pad or Super Scope in Port 1
+			// There should be a toggles here for what to put in, I'm leaving it at gamepad for now
+			break;
 
-			case 0x27:	// Pad or Mouse in Port 0, Pad or Mouse or Super Scope in Port 1
-				// There should be a toggles here for what to put in, I'm leaving it at gamepad for now
-				break;
+		case 0x27: // Pad or Mouse in Port 0, Pad or Mouse or Super Scope in Port 1
+			// There should be a toggles here for what to put in, I'm leaving it at gamepad for now
+			break;
 
-			// Not Supported yet
-			case 0x99:	// Lasabirdie
-				break;
+		// Not Supported yet
+		case 0x99: // Lasabirdie
+			break;
 
-			case 0x0A:	// Barcode Battler
-				break;
+		case 0x0A: // Barcode Battler
+			break;
 		}
 	}
 }
@@ -268,9 +265,9 @@ static void NSRTControllerSetup (void)
  * ParsePortConfig -> ParseDisplayConfig
  */
 
-void S9xParsePortConfig (ConfigFile &conf, int pass)
+void S9xParsePortConfig(ConfigFile &conf, int pass)
 {
-    #if 0
+#if 0
 	s9x_base_dir                = conf.GetStringDup("Unix::BaseDir",             default_dir);
 	sound_buffer_size           = conf.GetUInt     ("Unix::SoundBufferSize",     100);
 
@@ -278,13 +275,12 @@ void S9xParsePortConfig (ConfigFile &conf, int pass)
 	S9xParseInputConfig(conf, 1);
 
 	std::string section = S9xParseDisplayConfig(conf, 1);
-    #endif
+#endif
 }
 
-
-const char * S9xGetDirectory (enum s9x_getdirtype dirtype)
+const char *S9xGetDirectory(enum s9x_getdirtype dirtype)
 {
-	static char	s[PATH_MAX + 1];
+	static char s[PATH_MAX + 1];
 
 	if (dirNames[dirtype][0])
 		snprintf(s, PATH_MAX + 1, "%s%s%s", s9x_base_dir, SLASH_STR, dirNames[dirtype]);
@@ -292,44 +288,44 @@ const char * S9xGetDirectory (enum s9x_getdirtype dirtype)
 	{
 		switch (dirtype)
 		{
-			case DEFAULT_DIR:
-				strncpy(s, s9x_base_dir, PATH_MAX + 1);
-				s[PATH_MAX] = 0;
-				break;
+		case DEFAULT_DIR:
+			strncpy(s, s9x_base_dir, PATH_MAX + 1);
+			s[PATH_MAX] = 0;
+			break;
 
-			case HOME_DIR:
-				strncpy(s, getenv("HOME"), PATH_MAX + 1);
-				s[PATH_MAX] = 0;
-				break;
+		case HOME_DIR:
+			strncpy(s, getenv("HOME"), PATH_MAX + 1);
+			s[PATH_MAX] = 0;
+			break;
 
-			case ROMFILENAME_DIR:
-				strncpy(s, Memory.ROMFilename, PATH_MAX + 1);
-				s[PATH_MAX] = 0;
+		case ROMFILENAME_DIR:
+			strncpy(s, Memory.ROMFilename, PATH_MAX + 1);
+			s[PATH_MAX] = 0;
 
-				for (int i = strlen(s); i >= 0; i--)
+			for (int i = strlen(s); i >= 0; i--)
+			{
+				if (s[i] == SLASH_CHAR)
 				{
-					if (s[i] == SLASH_CHAR)
-					{
-						s[i] = 0;
-						break;
-					}
+					s[i] = 0;
+					break;
 				}
+			}
 
-				break;
+			break;
 
-			default:
-				s[0] = 0;
-				break;
+		default:
+			s[0] = 0;
+			break;
 		}
 	}
 
 	return (s);
 }
 
-const char * S9xGetFilename (const char *ex, enum s9x_getdirtype dirtype)
+const char *S9xGetFilename(const char *ex, enum s9x_getdirtype dirtype)
 {
-	static char	s[PATH_MAX + 1];
-	char		drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
+	static char s[PATH_MAX + 1];
+	char drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
 
 	_splitpath(Memory.ROMFilename, drive, dir, fname, ext);
 	snprintf(s, PATH_MAX + 1, "%s%s%s%s", S9xGetDirectory(dirtype), SLASH_STR, fname, ex);
@@ -337,14 +333,14 @@ const char * S9xGetFilename (const char *ex, enum s9x_getdirtype dirtype)
 	return (s);
 }
 
-const char * S9xGetFilenameInc (const char *ex, enum s9x_getdirtype dirtype)
+const char *S9xGetFilenameInc(const char *ex, enum s9x_getdirtype dirtype)
 {
-	static char	s[PATH_MAX + 1];
-	char		drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
+	static char s[PATH_MAX + 1];
+	char drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
 
-	unsigned int	i = 0;
-	const char		*d;
-	struct stat		buf;
+	unsigned int i = 0;
+	const char *d;
+	struct stat buf;
 
 	_splitpath(Memory.ROMFilename, drive, dir, fname, ext);
 	d = S9xGetDirectory(dirtype);
@@ -356,9 +352,9 @@ const char * S9xGetFilenameInc (const char *ex, enum s9x_getdirtype dirtype)
 	return (s);
 }
 
-const char * S9xBasename (const char *f)
+const char *S9xBasename(const char *f)
 {
-	const char	*p;
+	const char *p;
 
 	if ((p = strrchr(f, '/')) != NULL || (p = strrchr(f, '\\')) != NULL)
 		return (p + 1);
@@ -366,19 +362,19 @@ const char * S9xBasename (const char *f)
 	return (f);
 }
 
-const char * S9xSelectFilename (const char *def, const char *dir1, const char *ext1, const char *title)
+const char *S9xSelectFilename(const char *def, const char *dir1, const char *ext1, const char *title)
 {
-	static char	s[PATH_MAX + 1];
-	char		buffer[PATH_MAX + 1];
+	static char s[PATH_MAX + 1];
+	char buffer[PATH_MAX + 1];
 
 	printf("\n%s (default: %s): ", title, def);
 	fflush(stdout);
 
 	if (fgets(buffer, PATH_MAX + 1, stdin))
 	{
-		char	drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
+		char drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
 
-		char	*p = buffer;
+		char *p = buffer;
 		while (isspace(*p))
 			p++;
 		if (!*p)
@@ -388,7 +384,7 @@ const char * S9xSelectFilename (const char *def, const char *dir1, const char *e
 			p = buffer;
 		}
 
-		char	*q = strrchr(p, '\n');
+		char *q = strrchr(p, '\n');
 		if (q)
 			*q = 0;
 
@@ -401,13 +397,13 @@ const char * S9xSelectFilename (const char *def, const char *dir1, const char *e
 	return (NULL);
 }
 
-const char * S9xChooseFilename (bool8 read_only)
+const char *S9xChooseFilename(bool8 read_only)
 {
-	char	s[PATH_MAX + 1];
-	char	drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
+	char s[PATH_MAX + 1];
+	char drive[_MAX_DRIVE + 1], dir[_MAX_DIR + 1], fname[_MAX_FNAME + 1], ext[_MAX_EXT + 1];
 
-	const char	*filename;
-	char		title[64];
+	const char *filename;
+	char title[64];
 
 	_splitpath(Memory.ROMFilename, drive, dir, fname, ext);
 	snprintf(s, PATH_MAX + 1, "%s.frz", fname);
@@ -418,57 +414,57 @@ const char * S9xChooseFilename (bool8 read_only)
 #ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
-    S9xSetSoundMute(TRUE);
+	S9xSetSoundMute(TRUE);
 #endif
 
 	return (filename);
 }
 
-
-bool8 S9xOpenSnapshotFile (const char *filename, bool8 read_only, STREAM *file)
+bool8 S9xOpenSnapshotFile(const char *filename, bool8 read_only, STREAM *file)
 {
-    printf("open snapshotfile\n");
-    return FALSE;
+	printf("open snapshotfile\n");
+	return FALSE;
 }
 
-void S9xCloseSnapshotFile (STREAM file)
+void S9xCloseSnapshotFile(STREAM file)
 {
-    printf("close snapshotfile\n");
+	printf("close snapshotfile\n");
 	//CLOSE_STREAM(file);
 }
 
-bool8 S9xInitUpdate (void)
+bool8 S9xInitUpdate(void)
 {
 	return (TRUE);
 }
 
-bool8 S9xDeinitUpdate (int width, int height)
+bool8 S9xDeinitUpdate(int width, int height)
 {
 	S9xPutImage(width, height);
 	return (TRUE);
 }
 
-bool8 S9xContinueUpdate (int width, int height)
+bool8 S9xContinueUpdate(int width, int height)
 {
 	return (TRUE);
 }
 
-void S9xAutoSaveSRAM (void)
+void S9xAutoSaveSRAM(void)
 {
-		Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
 }
-void S9xSyncSpeed (void)
+void S9xSyncSpeed(void)
 {
 #ifdef HTML
 	IPPU.RenderThisFrame = (++IPPU.SkippedFrames >= Settings.SkipFrames) ? TRUE : FALSE;
-        if (IPPU.RenderThisFrame)
+	if (IPPU.RenderThisFrame)
 		IPPU.SkippedFrames = 0;
 
 #else
-	static struct timeval	next1 = { 0, 0 };
-	struct timeval			now;
+	static struct timeval next1 = {0, 0};
+	struct timeval now;
 
-	while (gettimeofday(&now, NULL) == -1) ;
+	while (gettimeofday(&now, NULL) == -1)
+		;
 
 	// If there is no known "next" frame, initialize it now.
 	if (next1.tv_sec == 0)
@@ -479,10 +475,10 @@ void S9xSyncSpeed (void)
 
 	// If we're on AUTO_FRAMERATE, we'll display frames always only if there's excess time.
 	// Otherwise we'll display the defined amount of frames.
-	unsigned	limit = (Settings.SkipFrames == AUTO_FRAMERATE) ? (timercmp(&next1, &now, <) ? 10 : 1) : Settings.SkipFrames;
+	unsigned limit = (Settings.SkipFrames == AUTO_FRAMERATE) ? (timercmp(&next1, &now, <) ? 10 : 1) : Settings.SkipFrames;
 
 	IPPU.RenderThisFrame = (++IPPU.SkippedFrames >= limit) ? TRUE : FALSE;
-    if (IPPU.RenderThisFrame)
+	if (IPPU.RenderThisFrame)
 		IPPU.SkippedFrames = 0;
 
 	else
@@ -490,7 +486,7 @@ void S9xSyncSpeed (void)
 		// If we were behind the schedule, check how much it is.
 		if (timercmp(&next1, &now, <))
 		{
-			unsigned	lag = (now.tv_sec - next1.tv_sec) * 1000000 + now.tv_usec - next1.tv_usec;
+			unsigned lag = (now.tv_sec - next1.tv_sec) * 1000000 + now.tv_usec - next1.tv_usec;
 			if (lag >= 500000)
 			{
 				// More than a half-second behind means probably pause.
@@ -507,10 +503,11 @@ void S9xSyncSpeed (void)
 	{
 
 		// If we're ahead of time, sleep a while.
-		unsigned	timeleft = (next1.tv_sec - now.tv_sec) * 1000000 + next1.tv_usec - now.tv_usec;
+		unsigned timeleft = (next1.tv_sec - now.tv_sec) * 1000000 + next1.tv_usec - now.tv_usec;
 		usleep(timeleft);
 
-		while (gettimeofday(&now, NULL) == -1) ;
+		while (gettimeofday(&now, NULL) == -1)
+			;
 		// Continue with a while-loop because usleep() could be interrupted by a signal.
 	}
 
@@ -522,10 +519,9 @@ void S9xSyncSpeed (void)
 		next1.tv_usec %= 1000000;
 	}
 #endif
-
 }
 
-void S9xExit (void)
+void S9xExit(void)
 {
 
 	S9xSetSoundMute(TRUE);
@@ -536,7 +532,7 @@ void S9xExit (void)
 		S9xNPDisconnect();
 #endif
 
-  Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
+	Memory.SaveSRAM(S9xGetFilename(".srm", SRAM_DIR));
 
 #ifdef FANCY
 	S9xSaveCheatFile(S9xGetFilename(".cht", CHEAT_DIR));
@@ -551,37 +547,41 @@ void S9xExit (void)
 }
 
 #ifdef DEBUGGER
-static void sigbrkhandler (int)
+static void sigbrkhandler(int)
 {
 	CPU.Flags |= DEBUG_MODE_FLAG;
-	signal(SIGINT, (SIG_PF) sigbrkhandler);
+	signal(SIGINT, (SIG_PF)sigbrkhandler);
 }
 #endif
-void S9xParseArg (char **argv, int &i, int argc){
-    printf("parse arg\n");
+void S9xParseArg(char **argv, int &i, int argc)
+{
+	printf("parse arg\n");
 }
-
 
 #ifdef HTML
 extern "C" void toggle_display_framerate() __attribute__((used));
-extern "C" void run(char*) __attribute__((used));
+extern "C" void run(char *) __attribute__((used));
 extern "C" int set_frameskip(int) __attribute__((used));
-int set_frameskip(int n){
-Settings.SkipFrames = n;
-return n;
+int set_frameskip(int n)
+{
+	Settings.SkipFrames = n;
+	return n;
 }
-void toggle_display_framerate(){
+void toggle_display_framerate()
+{
 
-    Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
+	Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
 }
-void mainloop(){
-    S9xProcessEvents(FALSE);
-    S9xMainLoop();
+void mainloop()
+{
+	S9xProcessEvents(FALSE);
+	S9xMainLoop();
 }
-void reboot_emulator(char *filename){
-  uint32 saved_flags = CPU.Flags;
-	bool8	loaded = FALSE;
-  loaded = Memory.LoadROM(filename);
+void reboot_emulator(char *filename)
+{
+	uint32 saved_flags = CPU.Flags;
+	bool8 loaded = FALSE;
+	loaded = Memory.LoadROM(filename);
 
 	if (!loaded)
 	{
@@ -604,41 +604,40 @@ void reboot_emulator(char *filename){
 
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
-
-	S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 32, 120, 122, 114, 97, 113, 119);
+	S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 16, 0x61,0x7a , 0x78, 0x73, 0x64, 0x63);
 	S9xInitDisplay(NULL, NULL);
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 
-    S9xSetTitle(String);
+	S9xSetTitle(String);
 #ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
-    S9xSetSoundMute(TRUE);
+	S9xSetSoundMute(TRUE);
 #endif
 }
-extern "C" void* set_transparency(int i) __attribute__((used));
-void* set_transparency(int i){
-    Settings.Transparency=i;
-    return (void *)&Settings;
+extern "C" void *set_transparency(int i) __attribute__((used));
+void *set_transparency(int i)
+{
+	Settings.Transparency = i;
+	return (void *)&Settings;
 }
-void run(char *filename){
-    reboot_emulator(filename);
-    #ifdef SOUND
-    printf("S9xSetSoundMute(FALSE)\n");
-    S9xSetSoundMute(FALSE);
-    #else
-    printf("S9xSetSoundMute(TRUE)\n");
-    S9xSetSoundMute(TRUE);
-    #endif
-    printf("start main loop\n");
-    emscripten_set_main_loop(mainloop, 0, 0);
+void run(char *filename)
+{
+	reboot_emulator(filename);
+#ifdef SOUND
+	printf("S9xSetSoundMute(FALSE)\n");
+	S9xSetSoundMute(FALSE);
+#else
+	printf("S9xSetSoundMute(TRUE)\n");
+	S9xSetSoundMute(TRUE);
+#endif
+	printf("start main loop\n");
+	emscripten_set_main_loop(mainloop, 0, 0);
 }
-
 
 #endif
 
-
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
 	printf("\n\nSnes9x " VERSION " for unix/SDL\n");
 
@@ -646,19 +645,22 @@ int main (int argc, char **argv)
 	s9x_base_dir = default_dir;
 
 	EM_ASM(
-		// console.log('Syncing file system...');
-		FS.mkdir('/home/web_user/.snes9x');
-		FS.mkdir('/home/web_user/.snes9x/sram');
-		FS.mount(IDBFS, {}, '/home/web_user/.snes9x/sram');
-		FS.syncfs(true, function(err) {
-			if (err) {
-				console.log(err);
-			} else {
-				// console.log('File system synced.');
-				window.initSNES();
-			}
-		});
-	);
+			// console.log('Syncing file system...');
+			FS.mkdir('/home/web_user/.snes9x');
+			FS.mkdir('/home/web_user/.snes9x/sram');
+			FS.mount(IDBFS, {}, '/home/web_user/.snes9x/sram');
+			FS.syncfs(
+					true, function(err) {
+						if (err)
+						{
+							console.log(err);
+						}
+						else
+						{
+							// console.log('File system synced.');
+							// window.initSNES();
+						}
+					}););
 
 	ZeroMemory(&Settings, sizeof(Settings));
 	Settings.MouseMaster = TRUE;
@@ -678,26 +680,27 @@ int main (int argc, char **argv)
 	Settings.StopEmulation = TRUE;
 	Settings.WrongMovieStateProtection = TRUE;
 	Settings.DumpStreamsMaxFrames = -1;
-  Settings.DisplayFrameRate = FALSE;
-  Settings.AutoDisplayMessages = TRUE;
+	Settings.DisplayFrameRate = FALSE;
+	Settings.AutoDisplayMessages = TRUE;
 	Settings.StretchScreenshots = 1;
 	Settings.SnapshotScreenshots = TRUE;
 	Settings.SkipFrames = 0;
 	Settings.TurboSkipFrames = 15;
 	Settings.CartAName[0] = 0;
 	Settings.CartBName[0] = 0;
-  Settings.NoPatch= TRUE;
-  Settings.SoundSync =  FALSE;
+	Settings.NoPatch = TRUE;
+	Settings.SoundSync = FALSE;
 #ifdef SOUND
 	Settings.Mute = FALSE;
-  Settings.SoundPlaybackRate = 22100;
+	Settings.SoundPlaybackRate = 22100;
 	Settings.SoundInputRate = 22100;
 #else
-  Settings.Mute = TRUE;
-  Settings.SoundPlaybackRate = 16000;
+	Settings.Mute = TRUE;
+	Settings.SoundPlaybackRate = 16000;
 	Settings.SoundInputRate = 16000;
 #endif
-	CPU.Flags = 0;    ;
+	CPU.Flags = 0;
+	;
 	if (!Memory.Init() || !S9xInitAPU())
 	{
 		fprintf(stderr, "Snes9x: Memory allocation failure - not enough RAM/virtual memory available.\nExiting...\n");
@@ -705,7 +708,7 @@ int main (int argc, char **argv)
 		S9xDeinitAPU();
 		exit(1);
 	}
-    sound_buffer_size= 100;
+	sound_buffer_size = 100;
 	S9xInitSound(sound_buffer_size, 0);
 	S9xSetSoundMute(TRUE);
 
@@ -715,14 +718,13 @@ int main (int argc, char **argv)
 	S9xSetRenderPixelFormat(RGB565);
 #endif
 
-
 	// domaemon: setting the title on the window bar
 
 #ifdef HTML
-       emscripten_exit_with_live_runtime();
+	emscripten_exit_with_live_runtime();
 #else
-    	uint32	saved_flags = CPU.Flags;
-	bool8	loaded = FALSE;
+	uint32 saved_flags = CPU.Flags;
+	bool8 loaded = FALSE;
 
 	if (rom_filename)
 	{
@@ -750,25 +752,24 @@ int main (int argc, char **argv)
 
 	CPU.Flags = saved_flags;
 	Settings.StopEmulation = FALSE;
-
-	S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 32, 120, 122, 114, 97, 113, 119);
+	S9xInitInputDevices(1103, 1104, 1105, 1106, 13, 16, 0x61,0x7a , 0x78, 0x73, 0x64, 0x63);
 	S9xInitDisplay(argc, argv);
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 
-    S9xSetTitle(String);
+	S9xSetTitle(String);
 #ifdef SOUND
 	S9xSetSoundMute(FALSE);
 #else
-    S9xSetSoundMute(TRUE);
+	S9xSetSoundMute(TRUE);
 #endif
-    printf("before start\n");
-    printf("registers.pcw=%x\n", Registers.PCw);
+	printf("before start\n");
+	printf("registers.pcw=%x\n", Registers.PCw);
 	int iters;
-	for(iters=0;iters<5000;iters++)
+	for (iters = 0; iters < 5000; iters++)
 	{
 
-        S9xMainLoop();
-        S9xProcessEvents(FALSE);
+		S9xMainLoop();
+		S9xProcessEvents(FALSE);
 	}
 
 #endif

@@ -1,37 +1,40 @@
-'use strict';
+"use strict";
 window.Module = {
   preRun: [],
   postRun: [],
-  canvas:document.getElementById('output'),
+  canvas: document.getElementById("output"),
   totalDependencies: 0,
-  monitorRunDependencies: function(left) {
+  monitorRunDependencies: function (left) {
     this.totalDependencies = Math.max(this.totalDependencies, left);
-  }
+  },
+  onRuntimeInitialized: function() {
+    initSNES();
+  },
 };
-window.initSNES = function() {
-  var snesReadFile = function(evt) {
+window.initSNES = function () {
+  var snesReadFile = function (evt) {
     var f = evt.currentTarget.files[0];
     var reader = new FileReader();
-    reader.onload = function(e) {
-      Module.FS_createDataFile("/", f.name, new Uint8Array(this.result) , true, true);
+    reader.onload = function (e) {
+      Module.FS_createDataFile("/", f.name, new Uint8Array(this.result), true, true);
       snesMain(f.name);
     };
     reader.readAsArrayBuffer(f);
   };
-  var snesMain = (function() {
+  var snesMain = (function () {
     var interval = null;
-    var run = Module.cwrap('run', null, ['string']);
-    return function(filename) {
+    var run = Module.cwrap("run", null, ["string"]);
+
+    return function (filename) {
       clearInterval(interval);
       interval = setInterval(Module._S9xAutoSaveSRAM, 20000);
       // reboot_romnum = -1; // seems unnecessary?
       run(filename);
-      resizeCanvas()
+      resizeCanvas();
     };
   })();
-
-  document.getElementById('fileInput').addEventListener('change', snesReadFile);
-  window.addEventListener('beforeunload', Module._S9xAutoSaveSRAM);
+  document.getElementById("fileInput").addEventListener("change", snesReadFile);
+  window.addEventListener("beforeunload", Module._S9xAutoSaveSRAM);
 };
 window.addEventListener(
   "resize",
