@@ -1,4 +1,5 @@
 "use strict";
+const gamepad = new Gamepad();
 window.Module = {
   preRun: [],
   postRun: [],
@@ -23,11 +24,14 @@ window.initSNES = function () {
   };
   var snesMain = (function () {
     var interval = null;
+    var interval2 = null;
     var run = Module.cwrap("run", null, ["string"]);
 
     return function (filename) {
       clearInterval(interval);
       interval = setInterval(Module._S9xAutoSaveSRAM, 20000);
+      clearInterval(interval2);
+      interval2 = setInterval(checkGamepad, 25);
       // reboot_romnum = -1; // seems unnecessary?
       run(filename);
       resizeCanvas();
@@ -36,6 +40,9 @@ window.initSNES = function () {
   document.getElementById("fileInput").addEventListener("change", snesReadFile);
   window.addEventListener("beforeunload", Module._S9xAutoSaveSRAM);
 };
+const checkGamepad = () =>{
+  gamepad.updateGamepad.call(gamepad);
+}
 window.addEventListener(
   "resize",
   (e) => {
