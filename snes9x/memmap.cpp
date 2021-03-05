@@ -1507,12 +1507,12 @@ uint32 CMemory::FileLoader (uint8 *buffer, const char *filename, int32 maxsize)
 	}
 
     if (HeaderCount == 0)
-		S9xMessage(S9X_INFO, S9X_HEADERS_INFO, "No ROM file header found.");
+		S9xMessage(S9X_INFO, S9X_HEADERS_INFO, " ");
     else
     if (HeaderCount == 1)
-		S9xMessage(S9X_INFO, S9X_HEADERS_INFO, "Found ROM file header (and ignored it).");
+		S9xMessage(S9X_INFO, S9X_HEADERS_INFO,  " ");
 	else
-		S9xMessage(S9X_INFO, S9X_HEADERS_INFO, "Found multiple ROM file headers (and ignored them).");
+		S9xMessage(S9X_INFO, S9X_HEADERS_INFO,  " ");
 
 	return ((uint32) totalSize);
 }
@@ -2710,7 +2710,7 @@ void CMemory::InitROM (void)
 	sprintf(String, "\"%s\" [%s] %s, %s, %s, %s, SRAM:%s, ID:%s, CRC32:%08X",
 		displayName, isChecksumOK ? "checksum ok" : ((Multi.cartType == 4) ? "no checksum" : "bad checksum"),
 		MapType(), Size(), KartContents(), Settings.PAL ? "PAL" : "NTSC", StaticRAMSize(), ROMId, ROMCRC32);
-	S9xMessage(S9X_INFO, S9X_ROM_INFO, String);
+	// S9xMessage(S9X_INFO, S9X_ROM_INFO, String);
 
 	Settings.ForceLoROM = FALSE;
 	Settings.ForceHiROM = FALSE;
