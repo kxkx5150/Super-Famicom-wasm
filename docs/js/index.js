@@ -70,3 +70,28 @@ const resizeCanvas = () => {
     canvas.style.width = 256 * val - 24 + "px";
   }, 1200);
 };
+document.getElementById("setteings").addEventListener("click", (e) => {
+  showSetting();
+});
+document.getElementById("settingdiv").addEventListener("click", (e) => {
+  hideSetting();
+});
+document.getElementById("gamepad_button_container").addEventListener("click", (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+},true);
+function hideSetting() {
+  let elem = document.getElementById("settingdiv");
+  if (elem.style.display == "block") {
+    elem.style.left = "-500px";
+    setTimeout(function () {
+      elem.style.display = "none";
+    }, 400);
+  }
+}
+function showSetting() {
+  document.getElementById("settingdiv").style.display = "block";
+  setTimeout(function () {
+    document.getElementById("settingdiv").style.left = 0;
+  }, 10);
+}

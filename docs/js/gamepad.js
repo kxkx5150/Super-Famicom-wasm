@@ -73,57 +73,53 @@ class Gamepad {
     window.addEventListener("gamepadconnected", (e) => {
       this.pads[e.gamepad.index] = e.gamepad;
       if (this.selected === -1) this.selected = e.gamepad.index;
-      document.getElementById("gamepad_info").textContent =
-          "Gamepad connected ";
-      // document.getElementById("gamepad_name").textContent = e.gamepad.id;
+      document.getElementById("gamepad_info").textContent = "Gamepad connected ";
+      document.getElementById("gamepad_name").textContent = e.gamepad.id;
     });
-    // this.button_info_elem = document.getElementById(
-    //     "gamepad_presse_button"
-    // );
-    // this.createOptions("start_button");
-    // this.createOptions("select_button");
-    // this.createOptions("a_button");
-    // this.createOptions("b_button");
-    // this.createOptions("c_button");
-    // this.loadValue();
-    // document
-    //     .getElementById("start_button")
-    //     .addEventListener("change", this.setValue.bind(this));
-    // document
-    //     .getElementById("select_button")
-    //     .addEventListener("change", this.setValue.bind(this));
-    // document
-    //     .getElementById("a_button")
-    //     .addEventListener("change", this.setValue.bind(this));
-    // document
-    //     .getElementById("b_button")
-    //     .addEventListener("change", this.setValue.bind(this));
-    //     document
-    //     .getElementById("c_button")
-    //     .addEventListener("change", this.setValue.bind(this));
+    this.button_info_elem = document.getElementById("gamepad_presse_button");
+    this.createOptions("start_button");
+    this.createOptions("select_button");
+    this.createOptions("a_button");
+    this.createOptions("b_button");
+    this.createOptions("x_button");
+    this.createOptions("y_button");
+    this.createOptions("l_button");
+    this.createOptions("r_button");
+    this.loadValue();
+    document.getElementById("start_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("select_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("a_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("b_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("x_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("y_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("l_button").addEventListener("change", this.setValue.bind(this));
+    document.getElementById("r_button").addEventListener("change", this.setValue.bind(this));
   }
   loadValue() {
     let lobj = localStorage.getItem("button_settings");
     if (lobj) {
       this.buttonMap = JSON.parse(lobj);
     }
-    // document.getElementById("start_button").value = this.buttonMap.START.no;
-    // document.getElementById(
-    //     "select_button"
-    // ).value = this.buttonMap.SELECT.no;
-    // document.getElementById("a_button").value = this.buttonMap.A.no;
-    // document.getElementById("b_button").value = this.buttonMap.B.no;
-    // document.getElementById("c_button").value = this.buttonMap.C.no;
+    document.getElementById("start_button").value = this.buttonMap.START.no;
+    document.getElementById("select_button").value = this.buttonMap.SELECT.no;
+    document.getElementById("a_button").value = this.buttonMap.A.no;
+    document.getElementById("b_button").value = this.buttonMap.B.no;
+    document.getElementById("x_button").value = this.buttonMap.X.no;
+    document.getElementById("y_button").value = this.buttonMap.Y.no;
+    document.getElementById("l_button").value = this.buttonMap.L.no;
+    document.getElementById("r_button").value = this.buttonMap.R.no;
   }
   setValue() {
-    // this.buttonMap.START.no =
-    //     document.getElementById("start_button").value - 0;
-    // this.buttonMap.SELECT.no =
-    //     document.getElementById("select_button").value - 0;
-    // this.buttonMap.A.no = document.getElementById("a_button").value - 0;
-    // this.buttonMap.B.no = document.getElementById("b_button").value - 0;
-    // this.buttonMap.C.no = document.getElementById("c_button").value - 0;
-    // localStorage.setItem("button_settings", JSON.stringify(this.buttonMap));
+    this.buttonMap.START.no = document.getElementById("start_button").value - 0;
+    this.buttonMap.SELECT.no = document.getElementById("select_button").value - 0;
+    this.buttonMap.A.no = document.getElementById("a_button").value - 0;
+    this.buttonMap.B.no = document.getElementById("b_button").value - 0;
+    this.buttonMap.X.no = document.getElementById("x_button").value - 0;
+    this.buttonMap.Y.no = document.getElementById("y_button").value - 0;
+    this.buttonMap.L.no = document.getElementById("l_button").value - 0;
+    this.buttonMap.R.no = document.getElementById("r_button").value - 0;
+
+    localStorage.setItem("button_settings", JSON.stringify(this.buttonMap));
   }
   createOptions(cont_id) {
     let cont = document.getElementById(cont_id);
@@ -327,7 +323,7 @@ class Gamepad {
     for (var i = 0; i < buttons.length; i++) {
       let btn = buttons[i];
       if (btn.pressed) {
-        // this.button_info_elem.textContent = "Button " + i;
+        this.button_info_elem.textContent = "Button " + i;
       }
       if (i === this.buttonMap[name].no) {
         if (btn.pressed) {
