@@ -12,6 +12,7 @@ window.Module = {
     initSNES();
   },
 };
+
 window.initSNES = function () {
   var snesReadFile = function (evt) {
     var f = evt.currentTarget.files[0];
@@ -37,7 +38,12 @@ window.initSNES = function () {
       resizeCanvas();
     };
   })();
+  var snesReset = function(e){
+    var reset = Module.cwrap("S9xSoftReset", null,null);
+    reset();
+  };
   document.getElementById("fileInput").addEventListener("change", snesReadFile);
+  document.getElementById("resetButton").addEventListener("click", snesReset);
   window.addEventListener("beforeunload", Module._S9xAutoSaveSRAM);
 };
 const checkGamepad = () =>{

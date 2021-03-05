@@ -215,8 +215,10 @@ extern uint8			S9xOpLengthsM0X1[256];
 extern uint8			S9xOpLengthsM0X0[256];
 
 void S9xMainLoop (void);
+extern "C"{
 void S9xReset (void);
 void S9xSoftReset (void);
+}
 void S9xDoHEventProcessing (void);
 
 static inline void S9xUnpackStatus (void)

@@ -268,7 +268,8 @@ static void S9xSoftResetCPU (void)
 
 void S9xReset (void)
 {
-    #ifdef FANCY
+
+#ifdef FANCY
 	S9xResetSaveTimer(FALSE);
 	S9xResetLogger();
 #endif
