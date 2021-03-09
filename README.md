@@ -14,7 +14,7 @@ https://kxkx5150.github.io/Super-Famicom-wasm/
 
 <br><br><br><br>
 
-xnesさんがwasm化した物をコンパイルしました。  
+xnesさんがsnes9xをwasm化
 https://github.com/tjwei/xnes
 
 wasmの元となったエミュレータ  snes9x  
