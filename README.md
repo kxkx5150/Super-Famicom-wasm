@@ -6,15 +6,18 @@ wasmのデモ＆勉強用です。
 <br><br>
 
 DEMO  
-https://kxkx5150.github.io/Super-Famicom-wasm/
+https://kxkx5150.github.io/Super-Famicom-wasm/  
 
+  
 
+比較用 js版 (マッパー対応少数)  
+https://kxkx5150.github.io/Super-Famicom.js/
 
 
 
 <br><br><br><br>
 
-xnesさんがsnes9xをwasm化
+xnesさんがsnes9xをwasm化  
 https://github.com/tjwei/xnes
 
 wasmの元となったエミュレータ  snes9x  
